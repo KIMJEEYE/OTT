@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>로그인</title>
+</head>
+<body>
+    <h1>로그인</h1>
+    <form id = "form" action="login" method="POST">
+        <label for="username">사용자 이름:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <input type="submit" value="로그인"> <a href="http://localhost:{{port}}/user/main"> 
+    </form>
+    <p>회원 가입 안하셨나요? <a href="http://localhost:{{port}}/user/signup">회원 가입</a></p>
+</body>
+</html>
