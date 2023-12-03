@@ -28,4 +28,8 @@ module.exports = class Payment extends Sequelize.Model{
             collate: 'utf8_general_ci',
         });
     }
+
+    static associate(models) {
+        Payment.belongsTo(models.User);
+      }
 };
