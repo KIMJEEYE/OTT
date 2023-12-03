@@ -23,4 +23,8 @@ module.exports = class Review extends Sequelize.Model{
             collate: 'utf8_general_ci',
         });
     }
+    static associate(models) {
+        Review.belongsTo(models.User);
+        Review.belongsTo(models.Movie);
+      }
 };
