@@ -28,4 +28,8 @@ module.exports = class Discount extends Sequelize.Model{
             collate: 'utf8_general_ci',
         });
     }
+
+    static associate(models) {
+        Discount.belongsTo(models.User);
+      }
 };
