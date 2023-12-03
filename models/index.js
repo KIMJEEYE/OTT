@@ -11,6 +11,19 @@ const config = require('../config/config')[env];
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
+const models = {
+  Content: ContentModel.init(sequelize),
+  Discount: DiscountModel.init(sequelize),
+  Movie: MovieModel.init(sequelize),
+  Payment: PaymentModel.init(sequelize),
+  Review: ReviewModel.init(sequelize),
+  User: UserModel.init(sequelize),
+};
+
+Object.values(models)
+  .filter(model => typeof model.associate === 'function')
+  .forEach(model => model.associate(models));
+
 const db = {
   sequelize,
   Content,
@@ -28,11 +41,11 @@ Payment.init(sequelize);
 Review.init(sequelize);
 User.init(sequelize);
 
-// Content.associate(db);
-// Discount.associate(db);
-// Movie.associate(db);
-// Payment.associate(db);
-// Review.associate(db);
-// User.associate(db);
+Content.associate(db);
+Discount.associate(db);
+Movie.associate(db);
+Payment.associate(db);
+Review.associate(db);
+User.associate(db);
 
 module.exports = db;
