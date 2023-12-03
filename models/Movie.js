@@ -32,4 +32,9 @@ module.exports = class Movie extends Sequelize.Model{
             collate: 'utf8_general_ci',
         });
     }
+
+    static associate(models) {
+        Movie.belongsToMany(models.User, { through: 'UserMovie' });
+        Movie.hasMany(models.Review);
+      }
 };
