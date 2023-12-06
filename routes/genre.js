@@ -17,61 +17,30 @@ router.get('/', async (req, res, next) => {
 
 // OTT에 등록된 장르를 목록으로 조회: GET movie/genre
 router.get('/genre', async (req, res, next) => {
-    Movie.find({})
-    .sort({ createAt: -1 })
-    .exec((err, movies) => {
-        if (err) return res.status(500).send({error: 'database failure'});
-        const genres = moive.reduce((acc, cur) => {
-            acc.push(...moive.genres);
+    try {
+        const movies = await Movie.findAll({ include: [{ model: Genre, as: 'Genres' }] });
+        const genres = movies.reduce((acc, cur) => {
+            acc.push(...cur.Genres.map(genre => genre.name));
             return acc;
         }, []);
         const uniqueGenres = Array.from(new Set(genres));
-        res.json({genres:uniqueGenres});
-    });
+        res.json({genres: uniqueGenres});
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
 });
 
 // OTT에 등록된 장르의 수 조회: GET movie/genre/count
 router.get('/genre/count', async (req, res, next) => {
-    Movie.find({})
-    .sort({ createAt: -1 })
-    .exec((err, movies) => {
-        if (err) return res.status(500).send({error: 'database failure'});
-        const genres = moive.reduce((acc, cur) => {
-            acc.push(...moive.genres);
+    try {
+        const movies = await Movie.findAll({ include: [{ model: Genre, as: 'Genres' }] });
+        const genres = movies.reduce((acc, cur) => {
+            acc.push(...cur.Genres.map(genre => genre.name));
             return acc;
         }, []);
         const uniqueGenres = Array.from(new Set(genres));
-        res.json({genres:uniqueGenres.length});
-    });
-});
-
-// OTT에 장르 등록: POST movie/genre
-router.post('/genre', async (req, res, next) => {
-    try {
-        const genre = await Genre.create(req.body);
-        res.status(201).json(genre);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-// OTT에 등록된 장르 수정: PUT movie/genre/:genre_id
-router.put('/genre/:genre_id', async (req, res, next) => {
-    try {
-        const genre = await Genre.update({ name: req.body.name }, { where: { id: req.params.genre_id } });
-        res.json(genre);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-// OTT에 등록된 장르 삭제: DELETE movie/genre/:genre_id
-router.delete('/genre/:genre_id', async (req, res, next) => {
-    try {
-        await Genre.destroy({ where: { id: req.params.genre_id } });
-        res.send('ok');
+        res.json({genres: uniqueGenres.length});
     } catch (err) {
         console.error(err);
         next(err);

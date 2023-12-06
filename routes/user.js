@@ -4,21 +4,19 @@ const express = require('express');
 const router = express.Router();
 
 const User = require('../models/User');
-
-const { logout } = require('./helpers');
+const { isLoggedIn, logout } = require('./helpers');
 
 const passport = require('passport');
 
-router.get('/', async (req, res, next) => {
+// routes/user.js 파일에서 /user 엔드포인트를 처리하는 부분
+router.get('/', isLoggedIn, async (req, res, next) => {
     try {
-        const users = await User.findAll({
-            attributes: ['id', 'username', 'email', 'dateOfBirth', 'phoneNumber']
+        // 현재 로그인된 사용자의 정보만 조회
+        const user = await User.findOne({
+            attributes: ['userId', 'username','email', 'dateOfBirth', 'phoneNumber'],
+            where: { userId: req.user.userId }
         });
-        res.render('user', {
-            title: require('../package.json').name,
-            port: process.env.PORT,
-            users: users.map(user => user.id)
-        });
+        res.render('user', { user: user });
     } catch (err) {
         console.error(err);
         next(err);
@@ -38,8 +36,8 @@ router.route('/signup')
         }
     })
     .post(async (req, res, next) => {
-        const { username, password, email, dateOfBirth, phoneNumber } = req.body;
-        const user = await User.findOne({ where: { username } });
+        const { userId, password, username, email, dateOfBirth, phoneNumber } = req.body;
+        const user = await User.findOne({ where: { userId } });
         if (user) {
             next(new Error('이미 존재하는 사용자입니다.'));
             return;
@@ -48,13 +46,14 @@ router.route('/signup')
         try {
             const hash = await bcrypt.hash(password, 12);
             await User.create({
-                username,
+                userId,
                 password: hash,
+                username,
                 email,
                 dateOfBirth,
                 phoneNumber
             });
-            res.redirect('user/login');
+            res.redirect('/user/login');
         }
 
         catch (err) {
@@ -81,68 +80,32 @@ router.route('/login')
         res.render('main');
     });
 
-router.get('/main', (req, res, next) => {
+router.get('/user/read', isLoggedIn, async (req, res, next) => {
     try {
-        res.render('main', {
-            title: require('../package.json').name,
-            port: process.env.PORT
+        const user = await User.findOne({
+            attributes: ['username', 'email', 'dateOfBirth', 'phoneNumber'],
+            where: { userId: req.user.userId }
         });
+        res.render('user', { user: user });
     } catch (err) {
         console.error(err);
         next(err);
     }
 });
 
-router.get('/read', async (req, res, next) => {
+router.post('/update', isLoggedIn, async (req, res, next) => {
     try {
+        const newPassword = req.body.password;
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-        const { username, password } = req.body;
-
-        if (!username || !password) {
-            return res.status(400).send('필수 입력값이 없습니다.');
-        }
-
-        if (!req.isAuthenticated()) {
-            return res.status(400).send('로그인 정보가 일치하지 않습니다.');
-        }
-
-        // 관리자일 경우 모든 사용자 정보 조회
-        if (username === 'admin') {
-            const users = await User.findAll({
-                attributes: ['id', 'username', 'email', 'dateOfBirth', 'phoneNumber']
-            });
-            res.render('user', {
-                title: require('../package.json').name,
-                port: process.env.PORT,
-                users: users.map(user => user.id)
-            });
-        } else {
-            // 특정 사용자 정보 조회
-            const user = await User.findOne({
-                attributes: ['id', 'username', 'email', 'dateOfBirth', 'phoneNumber'],
-                where: { username }
-            });
-            res.render('user', {
-                title: require('../package.json').name,
-                port: process.env.PORT,
-                users: [user.id]
-            });
-        }
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-router.post('/update', async (req, res, next) => {
-    try {
         const result = await User.update({
             username: req.body.username,
             email: req.body.email,
+            password: hashedPassword,
             dateOfBirth: req.body.dateOfBirth,
             phoneNumber: req.body.phoneNumber
         }, {
-            where: { id: req.body.id }
+            where: { userId: req.user.userId }
         });
         if (result)
             res.redirect('/user');
@@ -153,10 +116,10 @@ router.post('/update', async (req, res, next) => {
     }
 });
 
-router.post('/delete', async (req, res, next) => {
+router.post('/delete', isLoggedIn, async (req, res, next) => {
     try {
         const result = await User.destroy({
-            where: { id: req.body.id }
+            where: { userId: req.user.userId }
         });
         if (result)
             res.redirect('/user');

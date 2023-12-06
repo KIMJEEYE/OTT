@@ -12,58 +12,12 @@ const router = express.Router();
 const Discount = require('../models/Discount');
 const passport = require('passport');
 
+// 해당 유저에게만 해당하는 할인 정보 조회
 router.get('/', async (req, res, next) => {
     try {
+        // 유저에게 할당된 할인 정보 조회하는 로직
         const discounts = await Discount.findAll();
         res.json(discounts);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-router.get('/:discount_id', async (req, res, next) => {
-    try {
-        const discount = await Discount.findOne({ where: { id: req.params.discount_id } });
-        if (discount) {
-            res.json(discount);
-        } else {
-            res.status(404).send('Discount not found');
-        }
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-router.post('/', async (req, res, next) => {
-    try {
-        const discount = await Discount.create(req.body);
-        res.status(201).json(discount);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-router.put('/:discount_id', async (req, res, next) => {
-    try {
-        const discount = await Discount.update({ name: req.body.name }, { where: { id: req.params.discount_id } });
-        if (discount) {
-            res.json(discount);
-        } else {
-            res.status(404).send('Discount not found');
-        }
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-router.delete('/:discount_id', async (req, res, next) => {
-    try {
-        const result = await Discount.destroy({ where: { id: req.params.discount_id } });
-        res.json(result);
     } catch (err) {
         console.error(err);
         next(err);
