@@ -5,12 +5,18 @@ const bcrypt = require('bcrypt');
 module.exports = class User extends Sequelize.Model{
     static init(sequelize){
         return super.init({
-            username: {
+            userId:{
                 type: Sequelize.STRING(20),
                 allowNull: false,
+                unique: true,
+                primaryKey: true
             },
             password: {
                 type: Sequelize.STRING(100),
+                allowNull: false,
+            },
+            username: {
+                type: Sequelize.STRING(20),
                 allowNull: false,
             },
             email: {
@@ -18,7 +24,7 @@ module.exports = class User extends Sequelize.Model{
                 allowNull: false,
             },
             dateOfBirth: {
-                type: Sequelize.DATE,
+                type: Sequelize.DATEONLY,
                 allowNull: false,
             },
             phoneNumber: {

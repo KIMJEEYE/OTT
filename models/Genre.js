@@ -19,4 +19,8 @@ module.exports = class Genre extends Sequelize.Model {
             collate: 'utf8_general_ci',
         });
     }
+    static associate(models) {
+        this.belongsToMany(models.Movie, { through: models.MovieGenre, foreignKey: 'genreId', as: 'Moives' });
+    }
 };
+

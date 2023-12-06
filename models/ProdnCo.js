@@ -1,42 +1,33 @@
 // 제작사 관리에 관련된 데이터를 처리
 const  Sequelize = require('sequelize');
 
-module.exports = class Manufacturer extends Sequelize.Model{
+module.exports = class ProdnCo extends Sequelize.Model{
     static init(sequelize){
         return super.init({
-            productionCompany: {
+            name: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            representative: {
-                type: Sequelize.STRING,
-                allowNull: false,
-            },
-            phoneNumber: {
+            ceo: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
             homepage: {
                 type: Sequelize.STRING,
                 allowNull: true,
-            },
-            address: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            filmography: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
+            }
         },{
             sequelize,
             timestamps: false,
             underscored: false,
-            modelName: 'Manufacturer',
-            tableName: 'manufacturers',
+            modelName: 'ProdnCo',
+            tableName: 'prodnCos',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });
+    }
+    static associate(models){
+        this.belongsToMany(models.Movie, {through: models.ProdnCoMovies, foreignKey: 'prodncoId', as: 'Movies'})
     }
 };
