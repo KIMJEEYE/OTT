@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>결제 페이지</title>
+  </head>
+  <body>
+
+    <h1>결제 생성</h1>
+    <form id="paymentForm" action="/payment/create" method="post">
+      <label for="orderId">주문 ID:</label>
+      <input type="text" id="orderId" name="orderId" required>
+      <label for="amount">결제 금액:</label>
+      <input type="text" id="amount" name="amount" required>
+      <button type="submit">결제 요청</button>
+    </form>
+
+    <h1>결제 승인</h1>
+    <form id="confirmForm" action="/payment/confirm" method="post">
+      <label for="paymentKey">결제 키:</label>
+      <input type="text" id="paymentKey" name="paymentKey" required>
+      <button type="submit">결제 승인</button>
+    </form>
+
+    <h1>결제 취소</h1>
+    <form id="cancelForm" action="/payment/cancel" method="post">
+      <label for="cancelPaymentKey">취소할 결제 키:</label>
+      <input type="text" id="cancelPaymentKey" name="paymentKey" required>
+      <button type="submit">결제 취소</button>
+    </form>
+
+    <h1>결제 환불</h1>
+    <form id="refundForm" action="/payment/refund" method="post">
+      <label for="refundPaymentKey">환불할 결제 키:</label>
+      <input type="text" id="refundPaymentKey" name="paymentKey" required>
+      <button type="submit">결제 환불</button>
+    </form>
+
+  </body>
+</html>

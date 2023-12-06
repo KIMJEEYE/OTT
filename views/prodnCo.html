@@ -21,6 +21,12 @@
     </style>
 </head>
 <body>
+
+    <h2>제작사 모두 조회</h2>
+    {% for prodnco in prodnco %}
+        <a href="http://localhost:{{port}}/prodnco/{{prodnco.id}}">{{prodnco.name}}</a><br>
+    {% endfor %}
+
     <h1>OTT 제작사 정보</h1>
 
     <table>
