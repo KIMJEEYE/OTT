@@ -7,6 +7,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const cors = require('cors');
 
 const nunjucks = require('nunjucks');
 const { sequelize } = require('./models');
@@ -16,14 +17,17 @@ const passportConfig = require('./passport');
 
 const contentRouter = require('./routes/content');
 const discountRouter = require('./routes/discount');
-const manufacturerRouter = require('./routes/manufacturer');
+const prodncoRouter = require('./routes/prodnCo');
 const movieRouter = require('./routes/movie');
-const paymentRouter = require('./routes/payment');
 const reviewRouter = require('./routes/review');
 const userRouter = require('./routes/user');
+const paymentRouter = require('./routes/payment');
+
 
 dotenv.config();
 passportConfig(passport);
+
+const tossApiKey = process.env.TOSS_Secrity;
 
 const app = express();
 app.set('port', process.env.PORT || 3003);
@@ -32,6 +36,7 @@ app.set('view engine', 'html');
 nunjucks.configure(path.join(__dirname, 'views'), {
     express: app,
     watch: true,
+    autoescape: true
 });
 
 // 시퀄라이즈로 연결
@@ -54,7 +59,8 @@ app.use(
             secure: false
         },
         name: 'session-cookie'
-    })
+    }),
+    cors()
 );
 
 // passport.initialize(): req 객체에 passport 설정 심음
@@ -62,16 +68,21 @@ app.use(passport.initialize());
 // passport.session(): req.ssession 객체에 passport 정보 저장
 app.use(passport.session());
 
+app.use(express.static("client"));
+
+app.use(express.json());
+
 // 라우팅
 app.use('/content', contentRouter);
 app.use('/discount', discountRouter);
-app.use('/manufacturer', manufacturerRouter);
+app.use('/prodnco', prodncoRouter);
 app.use('/movie', movieRouter);
 app.use('/payment', paymentRouter);
 app.use('/review', reviewRouter);
 app.use('/user', userRouter);
+// app.use('/genre', genreRouter);
 
-app.use((req, res) => 
+app.use((req, res) =>
     res.render('index', {
         title: require('./package.json').name,
         port: app.get('port'),
