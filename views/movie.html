@@ -26,8 +26,8 @@
     <h2>모든 영화 목록 조회</h2>
     {% for movie in movies %}
         <a href="http://localhost:{{port}}/movie/{{movie.id}}">{{movie.title}}</a><br>
+        <a href="http://localhost:{{port}}/movie/{{movie.id}}/review">리뷰 작성</a><br>
     {% endfor %}
     
 </body>
-
 </html>
