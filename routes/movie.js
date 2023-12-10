@@ -75,11 +75,49 @@ router.get('/:movie_id', async (req, res, next) => {
             where: { id: req.params.movie_id },
             include: [{ model: Genre, as: 'Genres' }]
         });
+
         if (movie) {
-            res.json(movie);
+            res.render('movie', { movie });
         } else {
             res.status(404).send('영화를 찾지 못했습니다.');
         }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/:movie_id/review', async (req, res, next) => {
+    try {
+        const movie = await Movie.findOne({
+            where: { id: req.params.movie_id },
+            include: [{ model: Genre, as: 'Genres' }]
+        });
+
+        if (movie) {
+            res.render('review', {
+                title: '리뷰 작성 페이지',
+                movie: movie  // 해당 영화 정보를 렌더링에 전달
+            });
+        } else {
+            res.status(404).send('영화를 찾지 못했습니다.');
+        }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+// 리뷰 생성 
+router.post('/:movie_id/review/create', async (req, res, next) => {
+    try {
+        const movieId = req.params.movie_id;
+        const reviewStar = req.body.reviewStar;
+        const reviewContents = req.body.reviewContents;
+
+        // TODO: 리뷰를 실제로 저장하거나 다른 로직을 수행
+
+        res.send('리뷰가 성공적으로 작성되었습니다.');
     } catch (err) {
         console.error(err);
         next(err);
