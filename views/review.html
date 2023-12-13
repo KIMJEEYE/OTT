@@ -1,33 +1,75 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>리뷰 페이지</title>
     <link rel="stylesheet" href="/assets/css/star.css">
 </head>
+
 <body>
     <h1>리뷰 페이지</h1>
 
-    <form class="mb-3" name="myform" id="myform" action="review/create" method="post">
+    <form id="form" action="/review/create" method="post">
         <fieldset>
             <legend>별점을 선택해주세요</legend>
-            <input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">★</label>
-            <input type="radio" name="reviewStar" value="4" id="rate2"><label for="rate2">★★</label>
-            <input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">★★★</label>
-            <input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">★★★★</label>
-            <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">★★★★★</label>
+            <input type="radio" name="reviewStar" value="5" id="rating5"><label for="rating5">★★★★★</label>
+            <input type="radio" name="reviewStar" value="4" id="rating4"><label for="rating4">★★★★</label>
+            <input type="radio" name="reviewStar" value="3" id="rating3"><label for="rating3">★★★</label>
+            <input type="radio" name="reviewStar" value="2" id="rating2"><label for="rating2">★★</label>
+            <input type="radio" name="reviewStar" value="1" id="rating1"><label for="rating1">★</label>
         </fieldset>
-        
+
         <div>
-            <textarea class="col-auto form-control" type="text" id="reviewContents" placeholder="리뷰를 남겨주세요."></textarea>
+            <label for="title">영화 제목:</label>
+            <input type="text" id="title" name="title" required><br><br>
+            <textarea class="col-auto form-control" type="text" id="content" name="content"
+                placeholder="리뷰를 남겨주세요."></textarea>
         </div>
 
         <button type="submit">리뷰 작성</button>
     </form>
 
+    <h2>리뷰 목록</h2>
+    {% for review in reviews %}
+    <div>
+        <p>영화 제목: {{ review.title }}</p>
+        <p>별점: {{ review.rating }}</p>
+        <p>리뷰 내용: {{ review.content }}</p>
+        <hr>
+    </div>
+    {% endfor %}
+
+    <h2>리뷰 수정</h2>
+    <form id="form" action="/review/update" method="POST">
+        <fieldset>
+            <legend>별점을 선택해주세요</legend>
+            <input type="radio" name="reviewStar" value="5" id="rating5"><label for="rating5">★</label>
+            <input type="radio" name="reviewStar" value="4" id="rating4"><label for="rating4">★★</label>
+            <input type="radio" name="reviewStar" value="3" id="rating3"><label for="rating3">★★★</label>
+            <input type="radio" name="reviewStar" value="2" id="rating2"><label for="rating2">★★★★</label>
+            <input type="radio" name="reviewStar" value="1" id="rating1"><label for="rating1">★★★★★</label>
+        </fieldset>
+
+        <div>
+            <label for="title">영화 제목:</label>
+            <input type="text" id="title" name="title" required><br><br>
+            <textarea class="col-auto form-control" type="text" id="content" name="content" placeholder="리뷰를 남겨주세요."></textarea>
+        </div>
+    
+        <button type="submit">리뷰 수정</button>
+    </form>
+
+    <h2>리뷰 삭제</h2>
+    <form id="form" action="/review/delete" method="POST">
+        <label for="title">영화 제목:</label>
+        <input type="text" id="title" name="title" required><br><br>
+        <button type="submit">리뷰 삭제</button>
+    </form>
     <ul>
         <li><a href="index.html">메인 페이지로 돌아가기</a></li>
     </ul>
 </body>
+
 </html>

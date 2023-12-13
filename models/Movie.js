@@ -1,5 +1,3 @@
-// Movie.js
-
 const Sequelize = require('sequelize');
 const models = require('../models');
 
@@ -27,6 +25,10 @@ module.exports = class Movie extends Sequelize.Model {
             rating: {
                 type: Sequelize.FLOAT,
             },
+            prodncoId: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+            },
         }, {
             sequelize,
             timestamps: false,
@@ -41,11 +43,9 @@ module.exports = class Movie extends Sequelize.Model {
 
     static associate(models) {
         // 다대다 관계 설정
-        Movie.belongsToMany(models.User, { through: 'UserMovie' }); 
-        Movie.belongsToMany(models.Genre, { through: 'MovieGenre', foreignKey: 'movieId'}); 
-        Movie.belongsToMany(models.ProdnCo, { through: 'ProdnCoMovies', foreignKey: 'movieId'});
+        Movie.belongsToMany(models.User, { through: 'UserMovie' });
+        Movie.belongsToMany(models.Genre, { through: 'MovieGenre', foreignKey: 'movieId' });
         Movie.hasMany(models.Review, { foreignKey: 'movieId' });
-
         Movie.hasOne(models.Content, { foreignKey: 'movieId', as: 'Content' }); // 일대일 관계 설정
     }
 
@@ -61,7 +61,13 @@ module.exports = class Movie extends Sequelize.Model {
                 return;
             }
 
-            const reviews = movie.Reviews || [];
+            const reviews = movie.Reviews || []; // Reviews가 없으면 빈 배열로 초기화
+
+            if (reviews.length === 0) {
+                console.log('리뷰가 없어 평균 평점을 업데이트하지 않습니다.');
+                return;
+            }
+
             const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
             const averageRating = totalRating / reviews.length;
 
@@ -72,4 +78,5 @@ module.exports = class Movie extends Sequelize.Model {
             console.error('영화 평점을 업데이트하지 못했습니다.:', error);
         }
     }
+
 };
