@@ -1,24 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>OTT 제작사 정보</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <title>제작사</title>
 </head>
 <body>
 
@@ -26,36 +9,6 @@
     {% for prodnco in prodnco %}
         <a href="http://localhost:{{port}}/prodnco/{{prodnco.id}}">{{prodnco.name}}</a><br>
     {% endfor %}
-
-    <h1>OTT 제작사 정보</h1>
-
-    <table>
-        <tr>
-            <th>기업</th>
-            <th>플랫폼</th>
-            <th>스튜디오 투자</th>
-        </tr>
-        <tr>
-            <td>JTBC</td>
-            <td>티빙</td>
-            <td>JTBC 스튜디오, 필름몬스터, SLL</td>
-        </tr>
-        <tr>
-            <td>SBS</td>
-            <td>웨이브</td>
-            <td>스튜디오S, 예능 스튜디오 (예정)</td>
-        </tr>
-        <tr>
-            <td>KT</td>
-            <td>시즌</td>
-            <td>스튜디오 지니</td>
-        </tr>
-        <tr>
-            <td>카카오</td>
-            <td>카카오TV/페이지</td>
-            <td>메가몬스터, 로고스필름, 글앤그림미디어 등</td>
-        </tr>
-    </table>
 
 </body>
 </html>

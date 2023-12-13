@@ -1,33 +1,20 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>영화</title>
+    <title>Main Page</title>
 </head>
-
 <body>
-    <h2>장르로 영화 목록 조회</h2>
-    <form id="form" action="movie/genres/movie" method="get">
-        <label for="genre_name">장르 이름:</label>
-        <input type="text" id="genre_name" name="genre" required><br><br>
-        <button type="submit">조회하기</button>
-    </form>
+    <h1>Welcome to the Main Page</h1>
 
-    <h2>TOP 10 영화 조회</h2>
-    <form id="form_top" action="/movie/top" method="GET">
-        <button type="submit">조회하기</button>
-    </form>
-
-    <h2>최신 영화 조회</h2>
-    <form id="form_new" action="/movie/new" method="GET">
-        <button type="submit">조회하기</button>
-    </form>
-
-    <h2>모든 영화 목록 조회</h2>
-    {% for movie in movies %}
-        <a href="http://localhost:{{port}}/movie/{{movie.id}}">{{movie.title}}</a><br>
-    {% endfor %}
-    
+    <ul>
+        <li><a href="http://localhost:{{port}}/movie">영화</a></li>
+        <li><a href="http://localhost:{{port}}/user">사용자 정보</a></li>
+        <li><a href="http://localhost:{{port}}/prodnco">제작사 정보</a></li>
+        <li><a href="http://localhost:{{port}}/review">리뷰</a></li>
+        <li><a href="http://localhost:{{port}}/discount">할인 공지</a></li>
+        <li><a href="http://localhost:{{port}}/genre">장르</a></li>
+        <li><a href="http://localhost:{{port}}/payment">결제</a></li>
+        <li><a href="http://localhost:{{port}}/user/logout">로그아웃</a></li>
+    </ul>
 </body>
-
 </html>
