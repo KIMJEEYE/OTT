@@ -23,7 +23,8 @@ router.get('/', async (req, res, next) => {
         next(err);
     }
 });
-    
+   
+// 제작사 상세 조회
 router.get('/:prodnco_id', async (req, res, next) => {
     try {
         const prodnco = await ProdnCo.findOne({

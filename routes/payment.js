@@ -1,99 +1,116 @@
-// routes/paymentRoutes.js
 const express = require('express');
-const fetch = require('node-fetch');
-
 const router = express.Router();
-const tossApiKey = process.env.TOSS_Client_ID;
+const Payment = require('../models/Payment');
+const { isLoggedIn, isAdmin } = require('./helpers');
 
-// 결제 생성
-router.post('/create', async (req, res) => {
+
+router.get('/', async (req, res, next) => {
   try {
-    const response = await fetch('https://api.tosspayments.com/v1/payments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tossApiKey}`,
-      },
-      body: JSON.stringify({
-        orderId: req.body.orderId || 'YOUR_ORDER_ID',
-        amount: req.body.amount || 10000,
-        customerKey: 'CUSTOMER_KEY',
-        returnUrl: 'http://localhost:3003/payment/success',
-        cancelUrl: 'http://localhost:3003/payment/cancel',
-      }),
+    const paymentHistory = await Payment.findOne({
+      attributes: ['paymentDate', 'paymentMethod', 'paymentAmount']
     });
 
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.render('payment', {
+      title: require('../package.json').name,
+      port: process.env.PORT,
+    });
+
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 });
 
-// 결제 승인
-router.post('/confirm', async (req, res) => {
-  try {
-    const response = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tossApiKey}`,
-      },
-      body: JSON.stringify({
-        paymentKey: req.body.paymentKey || 'PAYMENT_KEY_FROM_CREATE',
-      }),
-    });
+// 결제 요청
+router.post('/', async (req, res) => {
+ try {
+    const paymentData = req.body;
 
-    const data = await response.json();
-    res.json(data);
+    switch (paymentData.paymentOption) {
+      case 'monthly':
+        paymentData.paymentAmount = 5000;
+        paymentData.paymentMethod = 'creditCard'; 
+        break;
+      case 'threeMonths':
+        paymentData.paymentAmount = 13000;
+        paymentData.paymentMethod = 'creditCard';
+        break;
+      case 'singleMovie':
+        paymentData.paymentAmount = 15000;
+        paymentData.paymentMethod = 'creditCard'; 
+        break;
+      default:
+        paymentData.paymentAmount = 0;
+        paymentData.paymentMethod = 'unknown'; 
+    }
+
+    
+    paymentData.paymentDate = new Date();
+
+
+    const payment = await Payment.create(paymentData);
+    
+
+    res.status(200).json({ message: '결제가 요청되었습니다.', payment });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: '서버 오류' });
   }
 });
 
-// 결제 취소
-router.post('/cancel', async (req, res) => {
-  try {
-    const response = await fetch('https://api.tosspayments.com/v1/payments/cancel', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tossApiKey}`,
-      },
-      body: JSON.stringify({
-        paymentKey: req.body.paymentKey || 'PAYMENT_KEY_TO_BE_CANCELED',
-      }),
-    });
 
-    const data = await response.json();
-    res.json(data);
+// 결제 취소 요청
+router.post('/payment/cancel', async (req, res) => {
+  try {
+    const paymentId = req.body.paymentId;
+    const payment = await Payment.findByPk(paymentId);
+    
+    if (!payment) {
+      return res.status(404).json({ message: '결제가 없습니다.' });
+    }
+
+    // 결제 취소 로직 구현
+    await payment.update({ status: 'cancelled' });
+
+    res.status(200).json({ message: '결제가 취소되었습니다.', payment });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: '서버 오류' });
   }
 });
 
-// 결제 환불
+// 결제 이력 조회
+router.get('/payment/history', async (req, res) => {
+  try {
+    const paymentHistory = await Payment.findAll();
+    res.status(200).json(paymentHistory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: '서버 오류' });
+  }
+});
+
+// 환불 요청
 router.post('/refund', async (req, res) => {
   try {
-    const response = await fetch('https://api.tosspayments.com/v1/payments/refund', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tossApiKey}`,
-      },
-      body: JSON.stringify({
-        paymentKey: req.body.paymentKey || 'PAYMENT_KEY_TO_BE_REFUNDED',
-      }),
-    });
-
-    const data = await response.json();
-    res.json(data);
+    const refundData = req.body;
+    const refund = await Refund.create(refundData);
+    res.status(200).json({ message: '환불이 요청되었습니다.', refund });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: '서버 오류' });
+  }
+});
+
+
+// 환불 이력 조회
+router.get('/refund/history', async (req, res) => {
+  try {
+    const refundHistory = await Refund.findAll();
+    res.status(200).json(refundHistory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: '서버 오류' });
   }
 });
 

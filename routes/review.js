@@ -1,6 +1,4 @@
 // 리뷰 관리에 관련된 라우트를 처리
-// 별 관리, 나라별 탑 10 저장, 사용자에 맞게 자동추천해줌
-// 리뷰 작성, 수정, 삭제, 조회, 좋아요, 싫어요, 신고, 댓글 작성, 수정, 삭제, 조회
 
 const express = require('express');
 const router = express.Router();
