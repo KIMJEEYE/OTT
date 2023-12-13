@@ -1,18 +1,45 @@
-// 콘텐츠 관리에 관련된 라우트를 처리
-// 콘텐츠 유효 기간 관리, 콘텐츠 업로드, 메타데이터 관리, 스트리밍 서비스 및 보존 기간 관리
-// 콘텐츠는 관리자만 들어갈 수 있음
-
 const express = require('express');
 const router = express.Router();
 const Content = require('../models/Content');
 const Movie = require('../models/Movie');
-// const Genre = require('../models/genre');
-const passport = require('passport');
+const { isAdmin } = require('./helpers');
 
-// 콘텐츠 등록
-router.post('/content', async (req, res, next) => {
+router.get('/', isAdmin, async (req, res, next) => {
     try {
-        const content = await Content.create(req.body);
+        const contents = await Content.findAll();
+        res.render('content', {
+            title: require('../package.json').name,
+            port: process.env.PORT,
+            contents: contents
+        });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+
+router.post('/', isAdmin, async (req, res, next) => {
+    try {
+        // 요청 본문으로부터 필요한 속성 추출
+        const { movieId, retentionPeriod } = req.body;
+
+        // Movie 테이블에서 movieId가 존재하는지 확인
+        const movie = await Movie.findByPk(movieId);
+        if (!movie) {
+            return res.status(404).json({ error: '영화를 찾을 수 없습니다.' });
+        }
+
+        // Content 모델을 생성할 때 업로드 날짜를 현재 시간으로, retentionPeriod를 기본값으로, validityPeriod를 현재 날짜로 설정
+        const content = await Content.create({
+            movieId,
+            uploadDate: new Date(),  // 업로드 날짜를 현재 시간으로 설정
+            retentionPeriod: retentionPeriod || 30,  // retentionPeriod를 제공하지 않으면 기본값 30으로 설정
+            validityPeriod: new Date(),  // validityPeriod를 현재 날짜로 설정
+            // 필요에 따라 req.body의 다른 속성을 추가
+        });
+
+        // 생성된 content로 응답
         res.status(201).json(content);
     } catch (err) {
         console.error(err);
@@ -20,42 +47,15 @@ router.post('/content', async (req, res, next) => {
     }
 });
 
-// 콘텐츠 목록 조회
-router.get('/content', async (req, res, next) => {
-    try {
-        const contents = await Content.findAll();
-        res.json(contents);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
 
-// 콘텐츠 상세 조회
-router.get('/content/:content_id', async (req, res, next) => {
+// 콘텐츠 조회
+router.get('/contents', isAdmin, async (req, res, next) => {
     try {
-        const content = await Content.findOne({ where: { id: req.params.content_id } });
-        if (content) {
-            res.json(content);
-        } else {
-            res.status(404).send('Content not found');
-        }
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-// 콘텐츠 장르 목록 조회
-router.get('/content/:content_id/genres', async (req, res, next) => {
-    try {
-        const content = await Content.findOne({ where: { id: req.params.content_id } });
-        if (content) {
-            const genres = await content.getGenres();
-            res.json(genres);
-        } else {
-            res.status(404).send('Content not found');
-        }
+        const contents = await Content.findAll({
+            attributes: ['id','validityPeriod', 'uploadDate', 'retentionPeriod'],
+        });
+        
+        res.json({ contents: contents });
     } catch (err) {
         console.error(err);
         next(err);
@@ -63,14 +63,16 @@ router.get('/content/:content_id/genres', async (req, res, next) => {
 });
 
 // 콘텐츠 수정
-router.put('/content/:content_id', async (req, res, next) => {
+router.post('/update', isAdmin, async (req, res, next) => {
     try {
-        const content = await Content.update({ name: req.body.name }, { where: { id: req.params.content_id } });
-        if (content) {
-            res.json(content);
-        } else {
-            res.status(404).send('Content not found');
-        }
+        const updateContent = await Content.update(
+            {
+                validityPeriod: req.body.validityPeriod,
+                retentionPeriod: req.body.retentionPeriod
+            },
+            { where: { id: req.body.id } }
+        );
+        res.status(200).send('콘텐츠를 수정했습니다.');
     } catch (err) {
         console.error(err);
         next(err);
@@ -78,14 +80,12 @@ router.put('/content/:content_id', async (req, res, next) => {
 });
 
 // 콘텐츠 삭제
-router.delete('/content/:content_id', async (req, res, next) => {
+router.post('/delete', isAdmin, async (req, res, next) => {
     try {
-        const result = await Content.destroy({ where: { id: req.params.content_id } });
-        if (result) {
-            res.status(200).send('Content deleted');
-        } else {
-            res.status(404).send('Content not found');
-        }
+        const deleteContent = await Content.destroy({
+            where: { id: req.body.id }
+        });
+        res.status(200).send('콘텐츠를 삭제했습니다.');
     } catch (err) {
         console.error(err);
         next(err);

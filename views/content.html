@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>콘텐츠 관리</title>
+</head>
+
+<body>
+
+    <h1> 콘텐츠 등록 </h1>
+    <form id="from" action="/content" method="POST">
+        <label for="movieId">영화 아이디:</label>
+        <input type="text" id="movieId" name="movieId" required><br><br>
+        <label for="paymentDate">유효기간 설정</label>
+        <input type="date" id="validityPeriod" name="validityPeriod" required><br><br>
+        <button type="submit">등록하기</button>
+    </form>
+
+    
+    <h1> 콘텐츠 조회 </h1>
+    <form id="form" action="/content/contents" method="GET">
+        <button type="submit">콘텐츠 조회</button>
+    </form>
+    
+    <h1> 콘텐츠 수정 </h1>
+    <form id = "form" action="/content/update" method="POST">
+        <label for = "contentId">콘텐츠 아이디:</label>
+        <input type="text" id="id" name="id" required><br><br>
+        <label for="paymentDate">유효기간 설정</label>
+        <input type="date" id="validityPeriod" name="validityPeriod" required><br><br>
+        <button type="submit">수정하기</button>
+    </form>
+
+    <h1> 콘텐츠 삭제 </h1>
+    <form id = "form" action="/content/delete" method="POST">
+        <label for = "contentId">콘텐츠 아이디:</label>
+        <input type="text" id="id" name="id" required><br><br>
+        <button type="submit">삭제하기</button>
+    </form>
+
+</body>
+
+</html>
