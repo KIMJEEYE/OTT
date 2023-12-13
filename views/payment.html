@@ -1,42 +1,40 @@
 <!DOCTYPE html>
-  <head>
-    <title>결제 페이지</title>
-  </head>
-  <body>
+<html>
 
-    <h1>결제</h1>
-    <form id="paymentForm" action="/payment" method="post">
-      <label for="paymentOption">결제 옵션:</label>
-      <select id="paymentOption" name="paymentOption" required>
-        <option value="monthly">한 달 결제 (5000원)</option>
-        <option value="threeMonths">3개월 결제 (13000원)</option>
-        <option value="singleMovie">영화 하나 구매권 (15000원)</option>
-      </select>
-    
-      <button type="submit">결제 요청</button>
-    </form>
+<head>
+  <title>결제 페이지</title>
+</head>
 
-    <h1>결제 취소</h1>
-    <form id="cancelForm" action="/payment/cancel" method="post">
-      <label for="cancelPaymentKey">취소할 결제 키:</label>
-      <input type="text" id="cancelPaymentKey" name="paymentKey" required>
-      <button type="submit">결제 취소</button>
-    </form>
+<body>
+  <h1>결제</h1>
+  <form id="form" action="/payment" method="post">
+    <label for="paymentOption">결제 옵션:</label>
+    <select id="paymentOption" name="paymentOption" required>
+      <option value="monthly">한 달 결제 (5000원)</option>
+      <option value="threeMonths">3개월 결제 (13000원)</option>
+      <option value="singleMovie">영화 하나 구매권 (15000원)</option>
+    </select>
+    <button type="submit">결제 요청</button>
+  </form>
 
-    <h1>결제 환불</h1>
-    <form id="refundForm" action="/payment/refund" method="post">
-      <label for="refundPaymentKey">환불할 결제 키:</label>
-      <input type="text" id="refundPaymentKey" name="paymentKey" required>
-      <button type="submit">결제 환불</button>
-    </form>
+  <h1>결제 내역</h1>
+  <form id="form" action="/payment/history" method="get">
+    <button type="submit">결제 내역 조회</button>
+  </form>
 
+  <h1>결제 취소</h1>
+  <form id="form" action="/payment/cancel" method="post">
+    <label for="cancelPaymentKey">취소할 결제 키:</label>
+    <input type="text" id="id" name="id" required>
+    <button type="submit">결제 취소</button>
+  </form>
 
-    <h1>결제 승인</h1>
-    <form id="confirmForm" action="/payment/approve" method="post">
-      <label for="paymentKey">결제 키:</label>
-      <input type="text" id="paymentKey" name="paymentKey" required>
-      <button type="submit">결제 승인</button>
-    </form>
+  <h1>결제 환불</h1>
+  <form id="form" action="/payment/refund" method="post">
+    <label for="refundPaymentKey">환불할 결제 키:</label>
+    <input type="text" id="id" name="id" required>
+    <button type="submit">결제 환불</button>
+  </form>
+</body>
 
-  </body>
 </html>
