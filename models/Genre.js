@@ -1,5 +1,6 @@
 // 장르 관련된 데이터를 처리하는 모델
 const Sequelize = require('sequelize');
+const config = require('../config/config');
 
 module.exports = class Genre extends Sequelize.Model {
     static init(sequelize) {
@@ -7,7 +8,10 @@ module.exports = class Genre extends Sequelize.Model {
             name: {
                 type: Sequelize.STRING(20),
                 allowNull: false,
+                unique: true,
+                primaryKey: true
             },
+            
         }, {
             sequelize,
             timestamps: false,
@@ -20,7 +24,7 @@ module.exports = class Genre extends Sequelize.Model {
         });
     }
     static associate(models) {
-        this.belongsToMany(models.Movie, { through: models.MovieGenre, foreignKey: 'genreId', as: 'Moives' });
+        Genre.belongsToMany(models.Movie, { through: 'MovieGenre', foreignKey: 'name'});
     }
 };
 

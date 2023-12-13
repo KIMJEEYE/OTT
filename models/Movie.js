@@ -9,10 +9,12 @@ module.exports = class Movie extends Sequelize.Model {
             title: {
                 type: Sequelize.STRING,
                 allowNull: false,
+                unique: true,
             },
             director: {
                 type: Sequelize.STRING,
                 allowNull: false,
+                unique: true,
             },
             year: {
                 type: Sequelize.INTEGER,
@@ -38,10 +40,13 @@ module.exports = class Movie extends Sequelize.Model {
     }
 
     static associate(models) {
-        Movie.belongsToMany(models.User, { through: 'UserMovie' });
-        this.belongsToMany(models.Genre, { through: models.MovieGenre, foreignKey: 'movieId', as: 'Genres' });
-        this.belongsToMany(models.ProdnCo, { through: models.ProdnCoMovies, foreignKey: 'movieId', as: 'ProdnCo' });
+        // 다대다 관계 설정
+        Movie.belongsToMany(models.User, { through: 'UserMovie' }); 
+        Movie.belongsToMany(models.Genre, { through: 'MovieGenre', foreignKey: 'movieId'}); 
+        Movie.belongsToMany(models.ProdnCo, { through: 'ProdnCoMovies', foreignKey: 'movieId'});
         Movie.hasMany(models.Review, { foreignKey: 'movieId' });
+
+        Movie.hasOne(models.Content, { foreignKey: 'movieId', as: 'Content' }); // 일대일 관계 설정
     }
 
     // 리뷰 평점 업데이트 하는 메서드

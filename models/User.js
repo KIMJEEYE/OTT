@@ -21,25 +21,15 @@ module.exports = class User extends Sequelize.Model{
             },
             email: {
                 type: Sequelize.STRING(40),
-                allowNull: false,
+                allowNull: true,
             },
             dateOfBirth: {
                 type: Sequelize.DATEONLY,
-                allowNull: false,
+                allowNull: true,
             },
             phoneNumber: {
                 type: Sequelize.STRING(20),
-                allowNull: false,
-            },
-            createdAt: {
-                type: Sequelize.DATE,
-                allowNull: false,
-                defaultValue: Sequelize.NOW,
-            },
-            updatedAt: {
-                type: Sequelize.DATE,
-                allowNull: false,
-                defaultValue: Sequelize.NOW,
+                allowNull: true,
             },
         },{
             sequelize,
@@ -55,16 +45,17 @@ module.exports = class User extends Sequelize.Model{
 
     static associate(models) {
         // User 모델과 다른 모델들 간의 관계 설정
-        this.hasMany(models.Content, { foreignKey: 'userId' });
-        this.hasMany(models.Discount, { foreignKey: 'userId' });
-        this.hasMany(models.Payment, { foreignKey: 'userId' });
-        this.hasMany(models.Review, { foreignKey: 'userId' });
-        this.belongsToMany(models.Movie, { through: 'UserMovie', foreignKey: 'userId' });
+        User.hasMany(models.Content, { foreignKey: 'userId' });
+        User.hasMany(models.Coupon, { foreignKey: 'userId' });
+        User.hasMany(models.Payment, { foreignKey: 'userId' });
+        User.hasMany(models.Review, { foreignKey: 'userId' });
+        User.belongsToMany(models.Movie, { through: 'UserMovie', foreignKey: 'userId' });
+        User.belongsToMany(models.Coupon, {through: 'UserCoupon', foreignKey: 'userId'});
     }
     
-    // // 비밀번호 검증 메서드
-    // validPassword(password) {
-    //     return bcrypt.compareSync(password,this.getDataValue('password'));
-    // }
+    // 비밀번호 검증 메서드
+    validPassword(password) {
+        return bcrypt.compareSync(password,this.getDataValue('password'));
+    }
 };
 
