@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const Coupon = require('../models/Coupon');
 
 const User = require('../models/User');
 const { isLoggedIn, logout, isAdmin } = require('./helpers');
@@ -146,5 +147,21 @@ router.get('/all', isLoggedIn, isAdmin, async (req, res, next) => {
         next(err);
     }
 });
+
+// 쿠폰 조회
+router.get('/coupon', isLoggedIn, async (req, res, next) => {
+    try {
+        const coupons = await Coupon.findAll({
+            attributes: ['name', 'discountRate', 'discountPeriod'],
+            where: { userId: req.user.userId }
+        });
+
+        res.json(coupons);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
 
 module.exports = router;

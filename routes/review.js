@@ -4,7 +4,6 @@ const User = require('../models/User');
 const Review = require('../models/Review');
 const Movie = require('../models/Movie');
 const { isLoggedIn } = require('./helpers');
-const passport = require('passport');
 
 // 리뷰 목록 조회
 router.get('/', async (req, res, next) => {
@@ -72,24 +71,6 @@ const processRating = async (title, reviewStar, content, user, method) => {
 };
 
 
-// 리뷰 수정
-router.put('/update', isLoggedIn, async (req, res, next) => {
-    try {
-        const updatedReviewData = await processRating(
-            req.body.title,
-            req.body.reviewStar,
-            req.body.content,
-            req.user,
-        );
-        res.status(201).json(updatedReviewData);
-
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-
 // 리뷰 작성 라우트
 router.post('/create', isLoggedIn, async (req, res, next) => {
     try {
@@ -111,7 +92,7 @@ router.post('/create', isLoggedIn, async (req, res, next) => {
             req.body.reviewStar,
             req.body.content,
             req.user,
-            'POST'
+
         );
 
         res.status(201).json(review);
@@ -142,7 +123,6 @@ router.post('/update', isLoggedIn, async (req, res, next) => {
             req.body.reviewStar,
             req.body.content,
             req.user,
-            'POST'
         );
         res.status(200).json(updatedReviewData);
     } catch (err) {

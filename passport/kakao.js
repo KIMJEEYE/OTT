@@ -11,14 +11,15 @@ module.exports = () => {
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             let user = await User.findOne({
-                where: { id: profile.id }
+                where: { userId: profile.id }
             });
             if (!user)
                 user = await User.create({
-                    id: profile.id,   
+                    userId: profile.id,   
                     password: '',
-                    name: profile.username,
-                    description: profile._json.properties.profile_image
+                    username: profile.username,
+                    dateOfBirth: null,
+                    phoneNumber: null
                 });
 
             done(null, user);

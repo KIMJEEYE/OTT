@@ -9,7 +9,6 @@ const MovieGenre = require('./MovieGenre');
 const ProdnCo = require('./ProdnCo');
 const ProdnCoMovies = require('./ProdnCoMovies');
 const PaymentCoupon = require('./PaymentCoupon');
-const UserCoupon = require('./UserCoupon');
 const Payment = require('./Payment');
 
 const env = process.env.NODE_ENV || 'development';
@@ -23,21 +22,19 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 const models = {
   
-  Content: Content.init(sequelize),
+  
   Coupon: Coupon.init(sequelize),
   
   Movie: Movie.init(sequelize),
+  Content: Content.init(sequelize),
   Review: Review.init(sequelize),
   User: User.init(sequelize),
   Genre: Genre.init(sequelize),
-  
   MovieGenre: MovieGenre.init(sequelize),
   ProdnCo: ProdnCo.init(sequelize),
   Payment: Payment.init(sequelize),
   ProdnCoMovies: ProdnCoMovies.init(sequelize),
   PaymentCoupon: PaymentCoupon.init(sequelize),
-  UserCoupon: UserCoupon.init(sequelize),
-  
 };
 
 

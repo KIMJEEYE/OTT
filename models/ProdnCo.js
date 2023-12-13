@@ -31,22 +31,4 @@ module.exports = class ProdnCo extends Sequelize.Model {
             }
         );
     }
-
-    static associate(models) {
-        ProdnCo.belongsToMany(models.Movie, {
-            through: 'ProdnCoMovies',
-            foreignKey: 'prodncoId',
-        });
-    }
-
-    // bulkCreate 메서드 추가
-    static async bulkCreate(items) {
-        try {
-            const createdItems = await ProdnCo.bulkCreate(items);
-            return createdItems;
-        } catch (error) {
-            console.error('Error in bulkCreate:', error);
-            throw error;
-        }
-    }
 };

@@ -22,14 +22,6 @@ module.exports = class Payment extends Sequelize.Model {
                     type: Sequelize.STRING,
                     defaultValue: 'pending',
                 },
-                userId: {
-                    type: Sequelize.INTEGER,
-                    allowNull: false,  
-                    references: {  
-                        model: 'User', 
-                        key: 'id',  
-                    }
-                },
             },
             {
                 sequelize,

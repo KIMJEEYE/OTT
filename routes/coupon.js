@@ -1,77 +1,57 @@
 const express = require('express');
 const router = express.Router();
-const Coupon = require('../models/Coupon');
-const passport = require('passport');
+const { isAdmin } = require('./helpers'); 
+const { User, Coupon, UserCoupon } = require('../models'); 
 
-router.post('/',async (req,res,next)=>{
-    try{
-        const coupon = await Coupon.findAll({
-            attributes:['name','discountRate','discountPeriod'],
-            include:[{model:User,as:'Users',through:models.UserCoupon}]
+router.get('/', isAdmin, async (req, res, next) => {
+    try {
+        const coupons = await Coupon.findAll({
+            attributes: ['id', 'name', 'discountRate', 'discountPeriod'],
         });
-        res.render('coupon',{
+
+        res.render('coupon', {
             title: require('../package.json').name,
             port: process.env.PORT,
-            coupon:coupon
+            coupons: coupons
         });
-    } catch(err){
-        console.error(err);
-        next(err);
-    }
-});
-
-// 해당 유저에게만 해당하는 할인 정보 조회
-router.get('/:userId', async (req, res, next) => {
-    try {
-        // 유저에게 할당된 할인 정보 조회하는 로직
-        const coupons = await Coupon.findAll();
-        res.json(coupons);
     } catch (err) {
         console.error(err);
         next(err);
     }
 });
 
-/* 
-    #############################################################################################
-    admin 관련 라우터
-*/
-
-// 새로운 할인 등록
-router.post('/', async (req, res, next) => {
+// 쿠폰 등록
+router.post('/', isAdmin, async (req, res, next) => {
     try {
-        const coupon = await Coupon.create(req.body);
-        res.status(201).json(coupon);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
+        const { userId, couponName } = req.body;
 
-// 특정 할인 정보 수정
-router.put('/:coupon_id', async (req, res, next) => {
-    try {
-        const coupon = await Coupon.update({ name: req.body.name }, { where: { id: req.params.coupon_id } });
-        if (coupon) {
-            res.json(coupon);
-        } else {
-            res.status(404).send('Coupon not found');
+        // 사용자 아이디로 사용자를 찾음
+        const user = await User.findOne({ where: { userId } });
+
+        // 사용자가 존재하지 않으면 에러 응답
+        if (!user) {
+            return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
         }
+
+        // 쿠폰 이름으로 쿠폰을 찾음
+        const existingCoupon = await Coupon.findOne({
+            where: { name: couponName }
+        });
+
+        // 쿠폰이 존재하지 않으면 에러 응답
+        if (!existingCoupon) {
+            return res.status(404).json({ error: '존재하지 않는 쿠폰입니다.' });
+        }
+
+        // 찾은 쿠폰에 userId를 추가
+        await existingCoupon.update({ userId: user.userId }, { fields: ['userId'] });
+
+        res.status(201).json({ message: '쿠폰이 등록되었습니다.' });
     } catch (err) {
         console.error(err);
         next(err);
     }
 });
 
-// 특정 할인 정보 삭제
-router.delete('/:coupon_id', async (req, res, next) => {
-    try {
-        const result = await Coupon.destroy({ where: { id: req.params.coupon_id } });
-        res.json(result);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
 
 module.exports = router;

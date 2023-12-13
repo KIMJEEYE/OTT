@@ -22,23 +22,7 @@ router.get('/', isLoggedIn, isAdmin, async (req, res, next) => {
     }
 });
 
-// router.get('/genre', isLoggedIn, isAdmin, async (req, res, next) => {
-//     try {
-//         const movies = await Movie.findAll({ include: [{ model: Genre, as: 'Genres' }] });
-//         const genres = movies.reduce((acc, cur) => {
-//             acc.push(...cur.Genres.map(genre => genre.name));
-//             return acc;
-//         }, []);
-//         const uniqueGenres = Array.from(new Set(genres));
-//         res.json({genres: uniqueGenres});
-//     } catch (err) {
-//         console.error(err);
-//         next(err);
-//     }
-// });
-
-
-// OTT에 등록된 장르를 목록으로 조회: GET movie/genre
+// OTT에 등록된 장르를 목록으로 조회
 router.get('/genre', isLoggedIn, isAdmin, async (req, res, next) => {
     try {
         const movies = await Movie.findAll({ include: [{ model: Genre, as: 'Genres' }] });
@@ -54,7 +38,7 @@ router.get('/genre', isLoggedIn, isAdmin, async (req, res, next) => {
     }
 });
 
-// OTT에 등록된 장르의 수 조회: GET movie/genre/count
+// OTT에 등록된 장르의 수 조회
 router.get('/genre/count', isLoggedIn, isAdmin, async (req, res, next) => {
     try {
         const movies = await Movie.findAll({ include: [{ model: Genre, as: 'Genres' }] });
@@ -70,7 +54,7 @@ router.get('/genre/count', isLoggedIn, isAdmin, async (req, res, next) => {
     }
 });
 
-// OTT에 장르 등록: POST movie/genre
+// OTT에 장르 등록
 router.post('/genre', isLoggedIn, isAdmin, async (req, res, next) => {
     try {
         const genre = await Genre.create(req.body);
@@ -81,7 +65,7 @@ router.post('/genre', isLoggedIn, isAdmin, async (req, res, next) => {
     }
 });
 
-// OTT에 등록된 장르 수정: PUT movie/genre/:genre_id
+// OTT에 등록된 장르 수정
 router.put('/genre/:genre_id', isLoggedIn, isAdmin, async (req, res, next) => {
     try {
         const genre = await Genre.update({ name: req.body.name }, { where: { id: req.params.genre_id } });
@@ -92,7 +76,7 @@ router.put('/genre/:genre_id', isLoggedIn, isAdmin, async (req, res, next) => {
     }
 });
 
-// OTT에 등록된 장르 삭제: DELETE movie/genre/:genre_id
+// OTT에 등록된 장르 삭제
 router.delete('/genre/:genre_id', isLoggedIn, isAdmin, async (req, res, next) => {
     try {
         await Genre.destroy({ where: { id: req.params.genre_id } });

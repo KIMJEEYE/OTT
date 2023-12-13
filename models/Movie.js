@@ -46,7 +46,7 @@ module.exports = class Movie extends Sequelize.Model {
         Movie.belongsToMany(models.User, { through: 'UserMovie' });
         Movie.belongsToMany(models.Genre, { through: 'MovieGenre', foreignKey: 'movieId' });
         Movie.hasMany(models.Review, { foreignKey: 'movieId' });
-        Movie.hasOne(models.Content, { foreignKey: 'movieId', as: 'Content' }); // 일대일 관계 설정
+        Movie.hasOne(models.Content, { foreignKey: 'movieId', as: 'Content' }); 
     }
 
     // 리뷰 평점 업데이트 하는 메서드
@@ -61,7 +61,7 @@ module.exports = class Movie extends Sequelize.Model {
                 return;
             }
 
-            const reviews = movie.Reviews || []; // Reviews가 없으면 빈 배열로 초기화
+            const reviews = movie.Reviews || []; 
 
             if (reviews.length === 0) {
                 console.log('리뷰가 없어 평균 평점을 업데이트하지 않습니다.');

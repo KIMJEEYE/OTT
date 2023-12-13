@@ -8,7 +8,7 @@ module.exports = class ProdnCoMovies extends Sequelize.Model {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: 'Movies', // 'Movies' 테이블을 참조
+                    model: 'Movies', 
                     key: 'id',
                 },
             },
@@ -16,7 +16,7 @@ module.exports = class ProdnCoMovies extends Sequelize.Model {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: 'ProdnCos', // 'ProdnCos' 테이블을 참조
+                    model: 'ProdnCos',
                     key: 'id',
                 },
             },

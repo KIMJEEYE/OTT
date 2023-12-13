@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 module.exports = class Coupon extends Sequelize.Model {
     static init(sequelize) {
-        this.sequelizeInstance = sequelize; // 추가: sequelize 참조를 인스턴스 속성에 저장
+        this.sequelizeInstance = sequelize;
         return super.init(
             {
                 name: {
@@ -43,7 +43,6 @@ module.exports = class Coupon extends Sequelize.Model {
     static associate(models) {
         // 다대다 연결
         Coupon.belongsToMany(models.Payment, { through: models.PaymentCoupon, foreignKey: 'couponId' });
-        Coupon.belongsToMany(models.User, { through: models.UserCoupon, foreignKey: 'couponId' });
     }
 
     static async insertCoupon(name, discountRate, discountPeriod) {

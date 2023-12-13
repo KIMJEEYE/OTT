@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-// 다음 영화
 module.exports = class Review extends Sequelize.Model {
     static init(sequelize) {
         return super.init({

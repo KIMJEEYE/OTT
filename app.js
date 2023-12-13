@@ -7,35 +7,36 @@ const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const cors = require('cors');
+const methodOverride = require('method-override');
 
 const nunjucks = require('nunjucks');
-const { sequelize } = require('./models');
+const sequelize = require('./models').sequelize;
+const models = require('./models');
 
 const passport = require('passport');
 const passportConfig = require('./passport');
 
 const contentRouter = require('./routes/content');
-const discountRouter = require('./routes/discount');
+const couponRouter = require('./routes/coupon');
 const prodncoRouter = require('./routes/prodnCo');
 const movieRouter = require('./routes/movie');
-const reviewRouter = require('./routes/review');
 const userRouter = require('./routes/user');
 const paymentRouter = require('./routes/payment');
-
-
+const authRouter = require('./routes/auth');
+const reviewRouter = require('./routes/review');
 dotenv.config();
 passportConfig(passport);
 
-const tossApiKey = process.env.TOSS_Secrity;
 
 const app = express();
 app.set('port', process.env.PORT || 3003);
 
+app.set('models', models);
+
 app.set('view engine', 'html');
-nunjucks.configure(path.join(__dirname, 'views'), {
+nunjucks.configure(path.join(__dirname, '/views'), {
     express: app,
-    watch: true,
+    watch: false,
     autoescape: true
 });
 
@@ -60,7 +61,7 @@ app.use(
         },
         name: 'session-cookie'
     }),
-    cors()
+    methodOverride('_method')
 );
 
 // passport.initialize(): req 객체에 passport 설정 심음
@@ -68,18 +69,15 @@ app.use(passport.initialize());
 // passport.session(): req.ssession 객체에 passport 정보 저장
 app.use(passport.session());
 
-app.use(express.static("client"));
-
-app.use(express.json());
-
 // 라우팅
 app.use('/content', contentRouter);
-app.use('/discount', discountRouter);
+app.use('/coupon', couponRouter);
 app.use('/prodnco', prodncoRouter);
 app.use('/movie', movieRouter);
 app.use('/payment', paymentRouter);
-app.use('/review', reviewRouter);
 app.use('/user', userRouter);
+app.use('/auth', authRouter);
+app.use('/review', reviewRouter);
 // app.use('/genre', genreRouter);
 
 app.use((req, res) =>

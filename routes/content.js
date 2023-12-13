@@ -21,10 +21,10 @@ router.get('/', isAdmin, async (req, res, next) => {
 
 router.post('/', isAdmin, async (req, res, next) => {
     try {
-        // 요청 본문으로부터 필요한 속성 추출
+        
         const { movieId, retentionPeriod } = req.body;
 
-        // Movie 테이블에서 movieId가 존재하는지 확인
+     
         const movie = await Movie.findByPk(movieId);
         if (!movie) {
             return res.status(404).json({ error: '영화를 찾을 수 없습니다.' });
@@ -33,10 +33,9 @@ router.post('/', isAdmin, async (req, res, next) => {
         // Content 모델을 생성할 때 업로드 날짜를 현재 시간으로, retentionPeriod를 기본값으로, validityPeriod를 현재 날짜로 설정
         const content = await Content.create({
             movieId,
-            uploadDate: new Date(),  // 업로드 날짜를 현재 시간으로 설정
-            retentionPeriod: retentionPeriod || 30,  // retentionPeriod를 제공하지 않으면 기본값 30으로 설정
-            validityPeriod: new Date(),  // validityPeriod를 현재 날짜로 설정
-            // 필요에 따라 req.body의 다른 속성을 추가
+            uploadDate: new Date(),  
+            retentionPeriod: retentionPeriod || 30,  
+            validityPeriod: new Date(),  
         });
 
         // 생성된 content로 응답

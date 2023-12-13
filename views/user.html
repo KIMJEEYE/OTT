@@ -6,6 +6,21 @@
 </head>
 
 <body>
+    {% if isAdmin %}
+        <h4> 모든 사용자 정보 </h4>
+        <ul>
+            {% for u in users %}
+                <li>
+                    <p>사용자 이름: {{ u.username }}</p>
+                    <p>이메일: {{ u.email }}</p>
+                    <p>생년월일: {{ u.dateOfBirth }}</p>
+                    <p>전화번호: {{ u.phoneNumber }}</p>
+                    <hr>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    
     <h2> 사용자 정보</h2>
     {% if user %}
     <p>사용자 이름: {{ user.username }}</p>
@@ -15,7 +30,8 @@
     {% endif %}
 
     <h4> 사용자 정보 수정 </h4>
-    <form id="form" action="user/update" method="POST">
+    <form id="form" action="/user/{{user.userId}}?_method=PUT" method="POST">
+        <input type="hidden" name="_method" value="PUT">
         <label for="username">사용자 이름:</label>
         <input type="text" id="username" name="username" required><br><br>
 
@@ -30,15 +46,22 @@
 
         <label for="phone">전화번호:</label>
         <input type="tel" id="phone" name="phoneNumber" required><br><br>
-        <button type="submit">수정하기</button>
+        <button type="submit" formmethod="POST">수정하기</button>
     </form>
 
-    <form id="form" action="user/logout" method="POST">
+    <h4> 쿠폰 확인 </h4>
+    <form id="form" action="/user/coupon" method="GET">
+        <button type="submit">쿠폰 확인</button>
+
+    <form id="form" action="/user/logout" method="POST">
         <button type="submit">로그아웃</button>
     </form>
 
-    <p>회원 탈퇴하시겠습니까? <a href="http://localhost:{{port}}/user/delete">회원 탈퇴</a></p>
-
+    <h4> 회원 탈퇴 </h4>
+    <form id="form" action="/user/{{user.userId}}?_method=DELETE" method="POST">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" formmethod="POST">회원 탈퇴</button>
+    </form>
 </body>
 
 </html>

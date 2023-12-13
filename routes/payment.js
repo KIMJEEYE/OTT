@@ -74,7 +74,6 @@ router.get('/history', isLoggedIn, async (req, res, next) => {
       where: { userId: userId }
     });
 
-    // JSON 형식으로 응답
     res.json({ payments: payments });
   } catch (error) {
     console.error(error);
@@ -100,7 +99,7 @@ router.post('/cancel', isLoggedIn, async (req, res) => {
 });
 
 
-// 결제 취소 요청
+// 결제 환불 요청
 router.post('/refund', isLoggedIn, async (req, res) => {
   try {
     const refundPayment = await Payment.update({
